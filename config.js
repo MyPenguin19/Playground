@@ -1,6 +1,6 @@
 window.APP_CONFIG = {
   supabase: {
-    url: "",
+    url: "https://jylnibcfwlkrkojnmfju.supabase.co",
     anonKey: ""
   }
 };
