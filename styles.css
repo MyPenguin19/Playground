@@ -1,0 +1,118 @@
+:root {
+  color-scheme: light;
+  --bg: #f8f4ec;
+  --bg-accent: #ffd8b8;
+  --panel: rgba(255, 255, 255, 0.72);
+  --text: #1e2430;
+  --muted: #5c6576;
+  --primary: #c45c2f;
+  --primary-dark: #9c451f;
+  --border: rgba(30, 36, 48, 0.08);
+  --shadow: 0 24px 60px rgba(54, 36, 20, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 216, 184, 0.95), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(196, 92, 47, 0.18), transparent 30%),
+    linear-gradient(160deg, var(--bg) 0%, #fffdf9 100%);
+}
+
+.hero {
+  width: min(720px, calc(100% - 3rem));
+  margin: 4rem auto;
+  padding: 3rem;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  line-height: 0.95;
+}
+
+.lede {
+  max-width: 38rem;
+  margin: 1.5rem 0 0;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 9rem;
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.primary {
+  color: #fffaf6;
+  background: linear-gradient(135deg, var(--primary) 0%, #d87d42 100%);
+  box-shadow: 0 14px 30px rgba(196, 92, 47, 0.28);
+}
+
+.primary:hover {
+  box-shadow: 0 18px 36px rgba(196, 92, 47, 0.34);
+}
+
+.secondary {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(30, 36, 48, 0.12);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    width: min(100% - 1.5rem, 720px);
+    margin: 1rem auto;
+    padding: 2rem 1.25rem;
+    border-radius: 24px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
