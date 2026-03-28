@@ -12,8 +12,16 @@ create table if not exists public.contact_messages (
   name text not null,
   email text not null,
   message text not null,
+  user_id uuid references auth.users (id) on delete set null,
+  submitted_by_email text,
   created_at timestamptz not null default now()
 );
+
+alter table public.contact_messages
+  add column if not exists user_id uuid references auth.users (id) on delete set null;
+
+alter table public.contact_messages
+  add column if not exists submitted_by_email text;
 
 alter table public.sample_messages enable row level security;
 alter table public.contact_messages enable row level security;

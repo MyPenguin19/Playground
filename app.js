@@ -9,6 +9,9 @@ const sampleStatusEl = document.querySelector("#sample-status");
 const sampleListEl = document.querySelector("#sample-list");
 const contactForm = document.querySelector("#contact-form");
 const contactStatusEl = document.querySelector("#contact-status");
+const messagesStatusEl = document.querySelector("#messages-status");
+const messagesListEl = document.querySelector("#messages-list");
+const refreshMessagesButton = document.querySelector("#refresh-messages-button");
 const config = window.APP_CONFIG?.supabase;
 
 let supabase = null;
@@ -46,6 +49,12 @@ function setContactStatus(message) {
   }
 }
 
+function setMessagesStatus(message) {
+  if (messagesStatusEl) {
+    messagesStatusEl.textContent = message;
+  }
+}
+
 function renderSamples(rows) {
   if (!sampleListEl) return;
 
@@ -63,6 +72,34 @@ function renderSamples(rows) {
     item.innerHTML = `<strong>${row.title}</strong><span>${row.body}</span>`;
     sampleListEl.appendChild(item);
   });
+}
+
+function renderMessages(rows) {
+  if (!messagesListEl) return;
+
+  messagesListEl.innerHTML = "";
+
+  if (!rows.length) {
+    messagesListEl.classList.remove("hidden");
+    const item = document.createElement("li");
+    item.textContent = "No contact messages yet. Submit the form above to create the first one.";
+    messagesListEl.appendChild(item);
+    return;
+  }
+
+  rows.forEach((row) => {
+    const item = document.createElement("li");
+    const submittedBy = row.submitted_by_email || row.email;
+    const createdAt = row.created_at ? new Date(row.created_at).toLocaleString() : "Just now";
+    item.innerHTML = `
+      <strong>${row.name}</strong>
+      <div class="message-meta">${submittedBy} · ${createdAt}</div>
+      <div class="message-body">${row.message}</div>
+    `;
+    messagesListEl.appendChild(item);
+  });
+
+  messagesListEl.classList.remove("hidden");
 }
 
 async function refreshSession() {
@@ -93,8 +130,12 @@ async function refreshSession() {
 
   if (email) {
     setAuthStatus(`Signed in as ${email}`, true);
+    refreshMessagesButton?.classList.remove("hidden");
   } else {
     setAuthStatus("Not signed in.");
+    refreshMessagesButton?.classList.add("hidden");
+    messagesListEl?.classList.add("hidden");
+    setMessagesStatus("Sign in to load saved messages.");
   }
 }
 
@@ -115,6 +156,35 @@ async function loadSamples() {
 
   setSampleStatus(`Loaded ${data.length} sample message${data.length === 1 ? "" : "s"}.`);
   renderSamples(data);
+}
+
+async function loadMessages() {
+  if (!supabase) return;
+
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (!userData.user) {
+    messagesListEl?.classList.add("hidden");
+    setMessagesStatus("Sign in to load saved messages.");
+    return;
+  }
+
+  setMessagesStatus("Loading inbox...");
+
+  const { data, error } = await supabase
+    .from("contact_messages")
+    .select("name, email, message, created_at, submitted_by_email")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    messagesListEl?.classList.add("hidden");
+    setMessagesStatus(`Could not load inbox: ${error.message}`);
+    return;
+  }
+
+  setMessagesStatus(`Loaded ${data.length} saved message${data.length === 1 ? "" : "s"}.`);
+  renderMessages(data);
 }
 
 async function handleAuthSubmit(event) {
@@ -162,6 +232,8 @@ async function handleSignOut() {
   }
 
   setAuthStatus("Signed out.");
+  messagesListEl?.classList.add("hidden");
+  setMessagesStatus("Sign in to load saved messages.");
 }
 
 async function handleContactSubmit(event) {
@@ -173,10 +245,14 @@ async function handleContactSubmit(event) {
   }
 
   const formData = new FormData(event.currentTarget);
+  const { data: userData } = await supabase.auth.getUser();
+  const authUser = userData.user;
   const payload = {
     name: String(formData.get("name") || "").trim(),
     email: String(formData.get("email") || "").trim(),
-    message: String(formData.get("message") || "").trim()
+    message: String(formData.get("message") || "").trim(),
+    user_id: authUser?.id || null,
+    submitted_by_email: authUser?.email || null
   };
 
   if (!payload.name || !payload.email || !payload.message) {
@@ -195,12 +271,14 @@ async function handleContactSubmit(event) {
 
   setContactStatus("Message saved to Supabase.");
   contactForm?.reset();
+  await loadMessages();
 }
 
 function bindEvents() {
   authForm?.addEventListener("submit", handleAuthSubmit);
   contactForm?.addEventListener("submit", handleContactSubmit);
   signOutButton?.addEventListener("click", handleSignOut);
+  refreshMessagesButton?.addEventListener("click", loadMessages);
 }
 
 async function initializeApp() {
@@ -240,10 +318,12 @@ async function initializeApp() {
 
   supabase.auth.onAuthStateChange(() => {
     refreshSession();
+    loadMessages();
   });
 
   await refreshSession();
   await loadSamples();
+  await loadMessages();
 }
 
 initializeApp();

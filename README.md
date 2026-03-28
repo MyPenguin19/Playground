@@ -9,6 +9,7 @@ This site now includes:
 - Supabase email magic-link auth
 - A sample data feed from `sample_messages`
 - A contact form that inserts into `contact_messages`
+- A signed-in inbox view for recent contact submissions
 
 Files:
 
@@ -46,6 +47,18 @@ After that:
 - Magic-link sign-in will work from the homepage
 - Sample messages will load from Supabase
 - The contact form will save rows to `contact_messages`
+- Signed-in users will be able to read recent contact messages in the inbox view
+
+## Database update for inbox metadata
+
+If you created the tables before the latest UI update, rerun `supabase/setup.sql`.
+
+It now adds:
+
+- `user_id` on `contact_messages` to store the authenticated Supabase user id when present
+- `submitted_by_email` on `contact_messages` to make the inbox easier to review
+
+Anonymous contact submissions still work, but signed-in submissions now carry auth-linked metadata too.
 
 ## Vercel note
 
