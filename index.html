@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
   <main class="hero">
@@ -21,6 +23,17 @@
       <a class="button primary" href="mailto:hello@example.com">Say Hello</a>
       <a class="button secondary" href="https://github.com" target="_blank" rel="noreferrer">View GitHub</a>
     </div>
+    <section class="setup-card" aria-labelledby="supabase-heading">
+      <p class="setup-label">Supabase Ready</p>
+      <h2 id="supabase-heading">Client scaffold added.</h2>
+      <p class="setup-copy">
+        Add your Supabase project URL and publishable key to
+        <code>config.js</code>, then redeploy on Vercel.
+      </p>
+      <div class="status" id="supabase-status" role="status" aria-live="polite">
+        Checking configuration...
+      </div>
+    </section>
   </main>
 </body>
 </html>
