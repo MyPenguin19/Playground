@@ -68,14 +68,28 @@ function renderSamples(rows) {
 async function refreshSession() {
   if (!supabase) return;
 
-  const { data, error } = await supabase.auth.getSession();
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
-  if (error) {
-    setAuthStatus(`Session error: ${error.message}`);
+  if (sessionError) {
+    setAuthStatus(`Session error: ${sessionError.message}`);
     return;
   }
 
-  const email = data.session?.user?.email;
+  const sessionUser = sessionData.session?.user;
+
+  if (sessionUser?.email) {
+    setAuthStatus(`Signed in as ${sessionUser.email}`, true);
+    return;
+  }
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    setAuthStatus(`User lookup error: ${userError.message}`);
+    return;
+  }
+
+  const email = userData.user?.email;
 
   if (email) {
     setAuthStatus(`Signed in as ${email}`, true);
@@ -200,10 +214,29 @@ async function initializeApp() {
     return;
   }
 
-  supabase = createClient(config.url, config.anonKey);
+  supabase = createClient(config.url, config.anonKey, {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true
+    }
+  });
   window.supabase = supabase;
 
   updateStatus("Supabase client initialized and ready.", "ready");
+
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      setAuthStatus(`Could not finish sign-in: ${error.message}`);
+    } else {
+      url.searchParams.delete("code");
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }
 
   supabase.auth.onAuthStateChange(() => {
     refreshSession();

@@ -250,10 +250,6 @@ h1 {
   border-color: rgba(30, 36, 48, 0.12);
 }
 
-.hidden {
-  display: none;
-}
-
 .button {
   display: inline-flex;
   align-items: center;
@@ -311,4 +307,8 @@ h1 {
   .submit-button {
     width: 100%;
   }
+}
+
+.hidden {
+  display: none !important;
 }
