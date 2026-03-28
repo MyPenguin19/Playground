@@ -123,6 +123,137 @@ h1 {
   color: var(--primary-dark);
 }
 
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.panel {
+  margin-top: 0;
+  padding: 1.4rem;
+  border: 1px solid rgba(30, 36, 48, 0.1);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.contact-panel {
+  margin-top: 1.25rem;
+}
+
+.panel-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.panel h2 {
+  margin: 0.55rem 0 0;
+  font-size: 1.45rem;
+}
+
+.panel-copy {
+  margin: 0.75rem 0 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+
+.contact-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.field span {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(30, 36, 48, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
+  font: inherit;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: 2px solid rgba(196, 92, 47, 0.22);
+  border-color: rgba(196, 92, 47, 0.35);
+}
+
+.status-block {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  background: rgba(30, 36, 48, 0.06);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.sample-list {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0;
+  margin: 1rem 0 0;
+  list-style: none;
+}
+
+.sample-list li {
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(30, 36, 48, 0.08);
+}
+
+.sample-list strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.submit-button {
+  width: fit-content;
+}
+
+.tertiary {
+  margin-top: 1rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(30, 36, 48, 0.12);
+}
+
+.hidden {
+  display: none;
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -168,7 +299,16 @@ h1 {
     flex-direction: column;
   }
 
+  .panel-grid,
+  .contact-form {
+    grid-template-columns: 1fr;
+  }
+
   .button {
+    width: 100%;
+  }
+
+  .submit-button {
     width: 100%;
   }
 }
